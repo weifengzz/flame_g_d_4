@@ -3,7 +3,7 @@ import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_g_d_4/start_button.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flame_g_d_4/woman_text_box.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
@@ -23,8 +23,11 @@ class MySpinGame extends FlameGame with HasTappables {
   late SpriteComponent woman;
   late MuteMusicButton musicButton;
   late StartButton startButton;
+  late WomanTextBox womanTextBox;
 
   bool addWoman = false;
+
+  String message = 'There is my favorite girl. hahhahahahahha';
 
   @override
   Color backgroundColor() {
@@ -53,6 +56,10 @@ class MySpinGame extends FlameGame with HasTappables {
       ..position = Vector2(size[0] / 2, size[1] / 2)
       ..anchor = Anchor.center;
     FlameAudio.bgm.initialize();
+
+    womanTextBox = WomanTextBox(message)
+      ..anchor = Anchor.bottomLeft
+      ..position = Vector2(0, size[1]);
   }
 
   @override
@@ -60,6 +67,7 @@ class MySpinGame extends FlameGame with HasTappables {
     super.render(canvas);
     if (addWoman && !woman.isMounted) {
       remove(startButton);
+      FlameAudio.bgm.play('music.mp3', volume: 0.3);
       add(woman);
     }
   }
@@ -72,15 +80,12 @@ class MySpinGame extends FlameGame with HasTappables {
       if (woman.angle < 1.75 * math.pi) {
         woman.angle += .01;
       }
-
       if (woman.height < size[1] - 40) {
         woman.height += 1;
         woman.width += 1;
       } else {
-        if (!kIsWeb) {
-          if (!musicButton.musicPlaying) {
-            FlameAudio.bgm.play('music.mp3', volume: 0.3);
-          }
+        if (!womanTextBox.isMounted) {
+          add(womanTextBox);
         }
       }
     }
